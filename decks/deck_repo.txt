@@ -1,0 +1,6 @@
+package decks
+
+func Get() Deck {
+	// cards := card.GetAll()
+	return Deck{card.GetAll()}
+}
