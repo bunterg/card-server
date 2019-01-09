@@ -1,9 +1,10 @@
 package storage
 
 import (
-	"card-server/cards"
-	"card-server/decks"
 	"time"
+
+	"github.com/bunterg/card-server/cards"
+	"github.com/bunterg/card-server/decks"
 )
 
 // Memory storage keeps beer data in memory

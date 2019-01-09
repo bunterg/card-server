@@ -1,11 +1,11 @@
 package main
 
 import (
-	"card-server/cards"
-	"card-server/decks"
-	"card-server/storage"
 	"fmt"
 	"time"
+
+	"github.com/bunterg/card-server/cards"
+	"github.com/bunterg/card-server/storage"
 )
 
 func main() {
@@ -13,17 +13,20 @@ func main() {
 	// set up storage
 	storageType := storage.InMemory // this could be a flag; hardcoded here for simplicity
 	var cardsStorage cards.Repository
-	var decksStorage decks.Repository
+	// var decksStorage decks.Repository
 	switch storageType {
 	case storage.InMemory:
 		cardsStorage = new(storage.MemoryCardStorage)
-		decksStorage = new(storage.MemoryDeckStorage)
+		// decksStorage = new(storage.MemoryDeckStorage)
 	case storage.JSONFiles:
 		// error handling omitted for simplicity
 		// cardsStorage, _ = storage.NewJSONBeerStorage()
 		// decksStorage, _ = storage.NewJSONReviewStorage()
 	}
+	c := cards.Card{Att: 1, Def: 1, Cost: 1, Class: 1}
+	cardsStorage.Add(c)
 	// change rand seed
+	fmt.Println(cardsStorage.GetAll())
 	elapsed := time.Since(start)
 	fmt.Println("scrypt took", elapsed)
 }

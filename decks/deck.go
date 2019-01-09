@@ -1,9 +1,10 @@
 package decks
 
 import (
-	"card-server/cards"
 	"errors"
 	"time"
+
+	"github.com/bunterg/card-server/cards"
 )
 
 // Deck indicate type of card
@@ -19,7 +20,7 @@ var ErrNotFound = errors.New("Deck not found")
 // Repository provides access to the review storage.
 type Repository interface {
 	// GetAll returns a list of all reviews for a given beer ID.
-	Get(int) []Deck
+	Get(int) (Deck, error)
 	GetAll() []Deck
 	// Add saves a given review.
 	Add(Deck) error

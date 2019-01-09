@@ -45,7 +45,7 @@ var ErrDuplicate = errors.New("Card Already Exists")
 // Repository provides access to the review storage.
 type Repository interface {
 	// GetAll returns a list of all reviews for a given beer ID.
-	Get(int) Card
+	Get(int) (Card, error)
 	GetAll() []Card
 	// Add saves a given review.
 	Add(Card) error
