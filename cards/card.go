@@ -8,20 +8,30 @@ import (
 // CardType indicate type of card
 type CardType int
 
+// Color indicate color of card
+type Color int
+
 // Card data model for game card profile
 type Card struct {
 	ID      int       `json:"id"`
-	Att     int       `json:"att"`
-	Def     int       `json:"def"`
-	Cost    int       `json:"cost"`
+	Number  int       `json:"number"`
 	Created time.Time `json:"created"`
 	Class   CardType  `json:"class"`
+	Color   Color     `json:"color"`
 }
 
 const (
-	basic CardType = iota
-	special
-	legendary
+	Number CardType = iota
+	Skip
+	Reverse
+	DrawTwo
+	DrawFour
+	Wild
+	Blue Color = iota
+	Green
+	Red
+	Yellow
+	Uncolor
 )
 
 func (cardType CardType) String() string {
@@ -31,11 +41,27 @@ func (cardType CardType) String() string {
 		"Legendary"}
 
 	// invalid cardType, out of range
-	if cardType < basic || cardType > legendary {
+	if cardType < Number || cardType > Wild {
 		return "Unknown"
 	}
 
 	return names[cardType]
+}
+
+func (c Color) String() string {
+	names := [...]string{
+		"Blue",
+		"Green",
+		"Red",
+		"Yellow",
+		"Uncolor"}
+
+	// invalid cardType, out of range
+	if c < Blue || c > Yellow {
+		return "Unknown"
+	}
+
+	return names[c]
 }
 
 // ErrNotFound is used when a beer could not be found.
