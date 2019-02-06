@@ -27,6 +27,9 @@ const (
 	DrawTwo
 	DrawFour
 	Wild
+)
+
+const (
 	Blue Color = iota
 	Green
 	Red
@@ -34,18 +37,21 @@ const (
 	Uncolor
 )
 
-func (cardType CardType) String() string {
+func (c CardType) String() string {
 	names := [...]string{
-		"Basic",
-		"Special",
-		"Legendary"}
+		"Number",
+		"Skip",
+		"Reverse",
+		"DrawTwo",
+		"DrawFour",
+		"Wild"}
 
 	// invalid cardType, out of range
-	if cardType < Number || cardType > Wild {
+	if c < Number || c > Wild {
 		return "Unknown"
 	}
 
-	return names[cardType]
+	return names[c]
 }
 
 func (c Color) String() string {
@@ -57,7 +63,7 @@ func (c Color) String() string {
 		"Uncolor"}
 
 	// invalid cardType, out of range
-	if c < Blue || c > Yellow {
+	if c < Blue || c > Uncolor {
 		return "Unknown"
 	}
 

@@ -23,7 +23,7 @@ func (m *MemoryCardStorage) Add(c cards.Card) error {
 	// 	}
 	// }
 
-	c.ID = len(m.cards) + 1
+	c.ID = len(m.cards)
 	c.Created = time.Now()
 	m.cards = append(m.cards, c)
 
