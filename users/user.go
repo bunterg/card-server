@@ -12,12 +12,12 @@ type User struct {
 	Created time.Time `json:"created"`
 }
 
-// ErrNotFound is used when a beer could not be found.
+// ErrNotFound is used when a Room could not be found.
 var ErrNotFound = errors.New("User not found")
 
 // Repository provides access to the review storage.
 type Repository interface {
-	// GetAll returns a list of all reviews for a given beer ID.
+	// GetAll returns a list of all reviews for a given Room ID.
 	Get(int) (User, error)
 	GetAll() []User
 	// Add saves a given review.

@@ -21,20 +21,20 @@ type Card struct {
 }
 
 const (
-	Number CardType = iota
-	Skip
-	Reverse
-	DrawTwo
-	DrawFour
-	Wild
+	number CardType = iota
+	skip
+	reverse
+	drawTwo
+	drawFour
+	wild
 )
 
 const (
-	Blue Color = iota
-	Green
-	Red
-	Yellow
-	Uncolor
+	blue Color = iota
+	green
+	red
+	yellow
+	uncolor
 )
 
 func (c CardType) String() string {
@@ -47,7 +47,7 @@ func (c CardType) String() string {
 		"Wild"}
 
 	// invalid cardType, out of range
-	if c < Number || c > Wild {
+	if c < number || c > wild {
 		return "Unknown"
 	}
 
@@ -63,20 +63,22 @@ func (c Color) String() string {
 		"Uncolor"}
 
 	// invalid cardType, out of range
-	if c < Blue || c > Uncolor {
+	if c < blue || c > uncolor {
 		return "Unknown"
 	}
 
 	return names[c]
 }
 
-// ErrNotFound is used when a beer could not be found.
+// ErrNotFound is used when a card could not be found.
 var ErrNotFound = errors.New("Card not found")
+
+// ErrDuplicate is used when a card already exists
 var ErrDuplicate = errors.New("Card Already Exists")
 
 // Repository provides access to the review storage.
 type Repository interface {
-	// GetAll returns a list of all reviews for a given beer ID.
+	// GetAll returns a list of all reviews for a given card ID.
 	Get(int) (Card, error)
 	GetAll() []Card
 	// Add saves a given review.

@@ -10,7 +10,7 @@ import (
 )
 
 // ----------------CARDS-----------
-// MemoryCardStorage storage keeps beer data in memory
+// MemoryCardStorage storage keeps card data in memory
 type MemoryCardStorage struct {
 	cards []cards.Card
 }
@@ -123,7 +123,7 @@ func (m *MemoryRoomStorage) Add(r rooms.Room, u users.User) error {
 	return nil
 }
 
-// Add saves the given Card to the repository
+// AddPlayer appends player to room
 func (m *MemoryRoomStorage) AddPlayer(room rooms.Room, u users.User) error {
 	r, _ := m.Get(room.ID)
 	r.Users = append(r.Users, u)
@@ -144,7 +144,7 @@ func (m *MemoryRoomStorage) Get(id int) (rooms.Room, error) {
 	return d, rooms.ErrNotFound
 }
 
-// GetAll return all beers
+// GetAll return all rooms
 func (m *MemoryRoomStorage) GetAll() []rooms.Room {
 	return m.rooms
 }

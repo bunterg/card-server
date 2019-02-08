@@ -14,12 +14,12 @@ type Deck struct {
 	Created time.Time    `json:"created"`
 }
 
-// ErrNotFound is used when a beer could not be found.
+// ErrNotFound is used when a deck could not be found.
 var ErrNotFound = errors.New("Deck not found")
 
 // Repository provides access to the review storage.
 type Repository interface {
-	// GetAll returns a list of all reviews for a given beer ID.
+	// GetAll returns a list of all reviews for a given deck ID.
 	Get(int) (Deck, error)
 	GetAll() []Deck
 	// Add saves a given review.

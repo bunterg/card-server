@@ -25,7 +25,7 @@ var ErrRoomFull = errors.New("Room aleardy full")
 
 // Repository provides access to the review storage.
 type Repository interface {
-	// GetAll returns a list of all reviews for a given beer ID.
+	// GetAll returns a list of all reviews for a given Room ID.
 	Get(int) (Room, error)
 	GetAll() []Room
 	// Add saves a given review.
