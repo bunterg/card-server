@@ -5,24 +5,18 @@ import (
 
 	"github.com/bunterg/card-server/cards"
 	"github.com/bunterg/card-server/decks"
+	"github.com/bunterg/card-server/rooms"
+	"github.com/bunterg/card-server/users"
 )
 
-// Memory storage keeps beer data in memory
+// ----------------CARDS-----------
+// MemoryCardStorage storage keeps beer data in memory
 type MemoryCardStorage struct {
 	cards []cards.Card
 }
 
 // Add saves the given Card to the repository
 func (m *MemoryCardStorage) Add(c cards.Card) error {
-	// for _, e := range m.cards {
-	// 	if c.Att == e.Att &&
-	// 		c.Def == e.Def &&
-	// 		c.Cost == e.Def &&
-	// 		c.Class == e.Class {
-	// 		return cards.ErrDuplicate
-	// 	}
-	// }
-
 	c.ID = len(m.cards)
 	c.Created = time.Now()
 	m.cards = append(m.cards, c)
@@ -44,65 +38,18 @@ func (m *MemoryCardStorage) Get(id int) (cards.Card, error) {
 	return card, cards.ErrNotFound
 }
 
-// GetAll return all beers
+// GetAll return all Cards
 func (m *MemoryCardStorage) GetAll() []cards.Card {
 	return m.cards
 }
 
-// // Memory storage keeps review data in memory
-// type MemoryReviewStorage struct {
-// 	beers   []cards.Card
-// 	reviews []reviews.Review
-// }
-
-// // Add saves the given review in the repository
-// func (m *MemoryReviewStorage) Add(r reviews.Review) error {
-// 	found := false
-// 	for b := range m.beers {
-// 		if m.beers[b].ID == r.BeerID {
-// 			found = true
-// 		}
-// 	}
-
-// 	if found {
-// 		r.ID = fmt.Sprintf("%s_%s_%s_%s", r.BeerID, r.FirstName, r.LastName, r.Created.Unix())
-// 		r.Created = time.Now()
-// 		m.reviews = append(m.reviews, r)
-// 	} else {
-// 		return reviews.ErrNotFound
-// 	}
-
-// 	return nil
-// }
-
-// // GetAll returns all reviews for a given beer
-// func (m *MemoryReviewStorage) GetAll(beerID int) []reviews.Review {
-// 	var list []reviews.Review
-
-// 	for i := range m.reviews {
-// 		if m.reviews[i].BeerID == beerID {
-// 			list = append(list, m.reviews[i])
-// 		}
-// 	}
-
-// 	return list
-// }
-
+// ----------------DECK-----------
 type MemoryDeckStorage struct {
 	decks []decks.Deck
 }
 
 // Add saves the given Card to the repository
 func (m *MemoryDeckStorage) Add(d decks.Deck) error {
-	// for _, e := range m.cards {
-	// 	if c.Att == e.Att &&
-	// 		c.Def == e.Def &&
-	// 		c.Cost == e.Def &&
-	// 		c.Class == e.Class {
-	// 		return cards.ErrDuplicate
-	// 	}
-	// }
-
 	d.ID = len(m.decks) + 1
 	d.Created = time.Now()
 	m.decks = append(m.decks, d)
@@ -124,7 +71,80 @@ func (m *MemoryDeckStorage) Get(id int) (decks.Deck, error) {
 	return d, decks.ErrNotFound
 }
 
-// GetAll return all beers
+// GetAll return all decks
 func (m *MemoryDeckStorage) GetAll() []decks.Deck {
 	return m.decks
+}
+
+// ----------------USERS-----------
+type MemoryUserStorage struct {
+	users []users.User
+}
+
+// Add saves the given User to the repository
+func (m *MemoryUserStorage) Add(u users.User) error {
+	u.ID = len(m.users) + 1
+	u.Created = time.Now()
+	m.users = append(m.users, u)
+
+	return nil
+}
+
+// Get returns a User with the specified ID
+func (m *MemoryUserStorage) Get(id int) (users.User, error) {
+	var d users.User
+
+	for i := range m.users {
+
+		if m.users[i].ID == id {
+			return m.users[i], nil
+		}
+	}
+
+	return d, decks.ErrNotFound
+}
+
+// GetAll return all Users
+func (m *MemoryUserStorage) GetAll() []users.User {
+	return m.users
+}
+
+// ----------------DECK-----------
+type MemoryRoomStorage struct {
+	rooms []rooms.Room
+}
+
+// Add saves the given Card to the repository
+func (m *MemoryRoomStorage) Add(r rooms.Room, u users.User) error {
+	r.ID = len(m.rooms)
+	r.Created = time.Now()
+	r.Owner = u
+	r.Users = []users.User{u}
+	return nil
+}
+
+// Add saves the given Card to the repository
+func (m *MemoryRoomStorage) AddPlayer(room rooms.Room, u users.User) error {
+	r, _ := m.Get(room.ID)
+	r.Users = append(r.Users, u)
+	return nil
+}
+
+// Get returns a card with the specified ID
+func (m *MemoryRoomStorage) Get(id int) (rooms.Room, error) {
+	var d rooms.Room
+
+	for i := range m.rooms {
+
+		if m.rooms[i].ID == id {
+			return m.rooms[i], nil
+		}
+	}
+
+	return d, rooms.ErrNotFound
+}
+
+// GetAll return all beers
+func (m *MemoryRoomStorage) GetAll() []rooms.Room {
+	return m.rooms
 }
