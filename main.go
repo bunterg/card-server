@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/bunterg/card-server/adding"
@@ -37,4 +38,5 @@ func main() {
 	fmt.Println(usersStorage.GetAll())
 	elapsed := time.Since(start)
 	fmt.Println("scrypt took", elapsed)
+	os.Exit(1)
 }
