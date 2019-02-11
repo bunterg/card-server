@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/bunterg/card-server/adding"
 	"github.com/bunterg/card-server/cards"
 	"github.com/bunterg/card-server/storage"
 	"github.com/bunterg/card-server/users"
@@ -25,7 +24,7 @@ func main() {
 		// error handling omitted for simplicity
 	}
 	// create the available services
-	adder := adding.NewService(cardsStorage)
+	adder := cards.NewService(cardsStorage)
 
 	// add some sample data
 	adder.AddSampleCards()
