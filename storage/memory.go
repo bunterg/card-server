@@ -110,6 +110,8 @@ func (m *MemoryUserStorage) GetAll() []users.User {
 }
 
 // ----------------DECK-----------
+
+// MemoryRoomStorage idk yet
 type MemoryRoomStorage struct {
 	rooms []rooms.Room
 }
