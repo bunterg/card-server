@@ -117,12 +117,12 @@ type MemoryRoomStorage struct {
 }
 
 // Add saves the given Card to the repository
-func (m *MemoryRoomStorage) Add(r rooms.Room, u users.User) error {
+func (m *MemoryRoomStorage) Add(r rooms.Room, u users.User) (rooms.Room, error) {
 	r.ID = len(m.rooms)
 	r.Created = time.Now()
 	r.Owner = u
 	r.Users = []users.User{u}
-	return nil
+	return r, nil
 }
 
 // AddPlayer appends player to room

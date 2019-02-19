@@ -7,6 +7,7 @@ import (
 // Service provides player adding operations
 type Service interface {
 	AddPlayer(Room, ...users.User)
+	NewRoom(users.User) Room
 }
 
 type service struct {
@@ -16,6 +17,15 @@ type service struct {
 // NewService creates an adding service with the necessary dependencies
 func NewService(rR Repository) Service {
 	return &service{rR}
+}
+
+func (s *service) NewRoom(u users.User) Room {
+	us := []users.User{u}
+	r, _ := s.rR.Add(Room{
+		Users: us,
+		Owner: u,
+	})
+	return r
 }
 
 // AddCard adds the given user(s) to the database
