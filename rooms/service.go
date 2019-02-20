@@ -44,6 +44,7 @@ func (s *service) InitMatch(r Room) error {
 	if len(r.Players) < 2 {
 		return ErrNotEnoughPlayers
 	}
+	/// TODO check if game has begun
 	// if r.Board == Board{} {
 	// 	return
 	// }
