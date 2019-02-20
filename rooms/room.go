@@ -22,14 +22,14 @@ type Room struct {
 type Board struct {
 	Graveyard decks.Deck `json:"gravetard"`
 	Deck      decks.Deck `json:"deck"`
-	Turn      users.User `json:"turn"`
+	Turn      int        `json:"turn"`
 	Hands     []Hand     `json:"hands"`
 }
 
 // Hand player cards
 type Hand struct {
-	Cards []cards.Card `json:"cards"`
-	User  users.User   `json:"player"`
+	Cards  []cards.Card `json:"cards"`
+	Player users.User   `json:"player"`
 }
 
 // ErrNotFound is used when a Room could not be found.
@@ -37,6 +37,9 @@ var ErrNotFound = errors.New("Room not found")
 
 // ErrRoomFull is used when a Room is full
 var ErrRoomFull = errors.New("Room aleardy full")
+
+// ErrNotEnoughPlayers is used when a Room is full
+var ErrNotEnoughPlayers = errors.New("Room needs more players")
 
 // Repository provides access to the review storage.
 type Repository interface {

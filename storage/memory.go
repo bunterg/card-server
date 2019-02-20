@@ -44,17 +44,25 @@ func (m *MemoryCardStorage) GetAll() []cards.Card {
 }
 
 // ----------------DECK-----------
+
+// MemoryDeckStorage deck storage}
+// if r.Board == Board{} {
+// 	return
+// }}
+// if r.Board == Board{} {
+// 	return
+// }
 type MemoryDeckStorage struct {
 	decks []decks.Deck
 }
 
 // Add saves the given Card to the repository
-func (m *MemoryDeckStorage) Add(d decks.Deck) error {
+func (m *MemoryDeckStorage) Add(d decks.Deck) (decks.Deck, error) {
 	d.ID = len(m.decks) + 1
 	d.Created = time.Now()
 	m.decks = append(m.decks, d)
 
-	return nil
+	return d, nil
 }
 
 // Get returns a card with the specified ID
