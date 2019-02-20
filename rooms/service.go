@@ -22,8 +22,8 @@ func NewService(rR Repository) Service {
 func (s *service) NewRoom(u users.User) Room {
 	us := []users.User{u}
 	r, _ := s.rR.Add(Room{
-		Users: us,
-		Owner: u,
+		Players: us,
+		Owner:   u,
 	})
 	return r
 }

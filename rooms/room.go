@@ -4,17 +4,32 @@ import (
 	"errors"
 	"time"
 
+	"github.com/bunterg/card-server/cards"
 	"github.com/bunterg/card-server/decks"
 	"github.com/bunterg/card-server/users"
 )
 
-// Room indicate type of card
+// Room player game lobby
 type Room struct {
 	ID      int          `json:"id"`
-	Deck    decks.Deck   `json:"deck"`
-	Users   []users.User `json:"users"`
 	Owner   users.User   `json:"Owner"`
 	Created time.Time    `json:"created"`
+	Players []users.User `json:"players"`
+	Board   Board        `json:"board"`
+}
+
+// Board playars and cards
+type Board struct {
+	Graveyard decks.Deck `json:"gravetard"`
+	Deck      decks.Deck `json:"deck"`
+	Turn      users.User `json:"turn"`
+	Hands     []Hand     `json:"hands"`
+}
+
+// Hand player cards
+type Hand struct {
+	Cards []cards.Card `json:"cards"`
+	User  users.User   `json:"player"`
 }
 
 // ErrNotFound is used when a Room could not be found.
