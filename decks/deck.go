@@ -15,7 +15,7 @@ type Deck struct {
 	Created time.Time    `json:"created"`
 }
 
-// Draw first card from the deck
+// Draw first n cards from the deck
 func (d Deck) Draw(n int) ([]cards.Card, error) {
 	if n > len(d.Cards) {
 		return []cards.Card{}, ErrNotEnoughCards

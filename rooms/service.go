@@ -53,6 +53,7 @@ func (s *service) InitMatch(r Room) error {
 	Deck, _ := s.dR.Add(decks.Deck{
 		Cards: s.cR.GetAll(),
 	})
+	Deck.Shuffle()
 	var Hands []Hand
 	for _, player := range r.Players {
 		cards, _ := Deck.Draw(7)
