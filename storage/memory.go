@@ -129,14 +129,14 @@ func (m *MemoryRoomStorage) Add(r rooms.Room, u users.User) (rooms.Room, error) 
 	r.ID = len(m.rooms)
 	r.Created = time.Now()
 	r.Owner = u
-	r.Users = []users.User{u}
+	r.Players = []users.User{u}
 	return r, nil
 }
 
 // AddPlayer appends player to room
 func (m *MemoryRoomStorage) AddPlayer(room rooms.Room, u users.User) error {
 	r, _ := m.Get(room.ID)
-	r.Users = append(r.Users, u)
+	r.Players = append(r.Players, u)
 	return nil
 }
 
