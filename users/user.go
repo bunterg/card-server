@@ -21,5 +21,5 @@ type Repository interface {
 	Get(int) (User, error)
 	GetAll() []User
 	// Add saves a given review.
-	Add(User) error
+	Add(User) (User, error)
 }

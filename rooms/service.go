@@ -28,7 +28,7 @@ func (s *service) NewRoom(u users.User) Room {
 	r, _ := s.rR.Add(Room{
 		Players: us,
 		Owner:   u,
-	})
+	}, u)
 	return r
 }
 

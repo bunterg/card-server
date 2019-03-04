@@ -5,6 +5,9 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/bunterg/card-server/listing"
+	"github.com/bunterg/card-server/rooms"
+
 	"github.com/bunterg/card-server/adding"
 	"github.com/bunterg/card-server/cards"
 	"github.com/bunterg/card-server/storage"
@@ -36,23 +39,29 @@ func main() {
 	storageType := storage.InMemory // this could be a flag; hardcoded here for simplicity
 	var cardsStorage cards.Repository
 	var usersStorage users.Repository
+	var roomsStorage rooms.Repository
 	switch storageType {
 	case storage.InMemory:
 		cardsStorage = new(storage.MemoryCardStorage)
 		usersStorage = new(storage.MemoryUserStorage)
+		roomsStorage = new(storage.MemoryRoomStorage)
 	case storage.JSONFiles:
 		// error handling omitted for simplicity
 	}
 	// create the available services
-	adder := cards.NewService(cardsStorage)
-	userAdder := adding.NewService(usersStorage)
+	cardAdder := cards.NewService(cardsStorage)
+	adder := adding.NewService(usersStorage)
+	lister := listing.NewService(usersStorage, roomsStorage)
 	// add some sample data
-	adder.AddSampleCards()
+	cardAdder.AddSampleCards()
 
 	hub := newHub()
 	go hub.run()
 	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/signup/", adding.MakeAddUserEndpoint(userAdder))
+	http.HandleFunc("/signup/", adding.MakeAddUserEndpoint(adder))
+	http.HandleFunc("/createRoom/", adding.MakeAddRoomEndpoint(adder))
+	http.HandleFunc("/getUsers/", listing.MakeGetUsersEndpoint(lister))
+	http.HandleFunc("/getRooms/", listing.MakeGetRoomsEndpoint(lister))
 	http.HandleFunc("/ws/", func(w http.ResponseWriter, r *http.Request) {
 		wsPath := "/ws/"
 		if r.URL.Path == wsPath {

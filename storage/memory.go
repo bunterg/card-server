@@ -90,12 +90,12 @@ type MemoryUserStorage struct {
 }
 
 // Add saves the given User to the repository
-func (m *MemoryUserStorage) Add(u users.User) error {
+func (m *MemoryUserStorage) Add(u users.User) (users.User, error) {
 	u.ID = len(m.users) + 1
 	u.Created = time.Now()
 	m.users = append(m.users, u)
 
-	return nil
+	return u, nil
 }
 
 // Get returns a User with the specified ID

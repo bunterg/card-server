@@ -47,6 +47,6 @@ type Repository interface {
 	Get(int) (Room, error)
 	GetAll() []Room
 	// Add saves a given review.
-	Add(Room) (Room, error)
+	Add(Room, users.User) (Room, error)
 	AddPlayer(Room, users.User) error
 }
