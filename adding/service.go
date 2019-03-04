@@ -7,8 +7,8 @@ import (
 
 // Service provides User adding operations
 type Service interface {
-	AddUser(...users.User) []users.User
-	AddRoom(u users.User) rooms.Room
+	AddUser(users.User) (users.User, error)
+	AddRoom(users.User) (rooms.Room, error)
 }
 
 type service struct {
@@ -22,16 +22,11 @@ func NewService(uR users.Repository, rR rooms.Repository) Service {
 }
 
 // AddUser adds the given user(s) to the database
-func (s *service) AddUser(u ...users.User) []users.User {
-	var ru []users.User
-	for _, user := range u {
-		nu, _ := s.uR.Add(user)
-		ru = append(ru, nu)
-	}
-	return ru
+func (s *service) AddUser(u users.User) (users.User, error) {
+	return s.uR.Add(u)
 }
 
-func (s *service) AddRoom(u users.User) rooms.Room {
-	r, _ := s.rR.Add(rooms.Room{}, u)
-	return r
+func (s *service) AddRoom(u users.User) (rooms.Room, error) {
+	user, _ := s.uR.Get(u.ID)
+	return s.rR.Add(rooms.Room{}, user)
 }

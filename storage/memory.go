@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"log"
 	"time"
 
 	"github.com/bunterg/card-server/cards"
@@ -137,20 +138,19 @@ func (m *MemoryRoomStorage) Add(r rooms.Room, u users.User) (rooms.Room, error) 
 func (m *MemoryRoomStorage) AddPlayer(room rooms.Room, u users.User) error {
 	r, _ := m.Get(room.ID)
 	r.Players = append(r.Players, u)
+	log.Println(r)
 	return nil
 }
 
 // Get returns a card with the specified ID
 func (m *MemoryRoomStorage) Get(id int) (rooms.Room, error) {
 	var d rooms.Room
-
 	for i := range m.rooms {
 
 		if m.rooms[i].ID == id {
 			return m.rooms[i], nil
 		}
 	}
-
 	return d, rooms.ErrNotFound
 }
 

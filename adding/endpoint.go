@@ -2,11 +2,10 @@ package adding
 
 import (
 	"encoding/json"
-	"io"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/bunterg/card-server/users"
 )
@@ -20,34 +19,21 @@ type SignUpBody struct {
 func MakeAddUserEndpoint(s Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("SIGNUP FUNC")
-		if r.URL.Path != "/signup/" {
-			http.Error(w, "Not found", http.StatusNotFound)
-			return
-		}
-		if r.Method != "POST" {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-			return
-		}
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "Bad Request (body)", http.StatusBadRequest)
-			return
-		}
-		// var m map[string]interface{}
 		var m SignUpBody
-		err = json.Unmarshal(body, &m)
+		err := requestPostData(w, r, "/signup/", &m)
 		if err != nil {
-			http.Error(w, "Bad Request (body data)", http.StatusBadRequest)
 			return
 		}
-		log.Println("NEW USER: " + m.Username)
-		profile := s.AddUser(users.User{Name: m.Username})
-		js, err := json.Marshal(profile[0])
+		profile, _ := s.AddUser(users.User{Name: m.Username})
+		log.Printf("NEW USER:\n %v", profile)
+		js, err := json.Marshal(profile)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
 		// SUCCESS
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(js)
 	}
@@ -62,29 +48,45 @@ type NewRoomBody struct {
 func MakeAddRoomEndpoint(s Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("NEW ROOM FUNC")
-		if r.URL.Path != "/createRoom/" {
-			http.Error(w, "Not found", http.StatusNotFound)
-			return
-		}
-		if r.Method != "POST" {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-			return
-		}
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "Bad Request (body)", http.StatusBadRequest)
-			return
-		}
-		// var m map[string]interface{}
 		var m NewRoomBody
-		err = json.Unmarshal(body, &m)
+		err := requestPostData(w, r, "/createRoom/", &m)
 		if err != nil {
-			http.Error(w, "Bad Request (body data)", http.StatusBadRequest)
 			return
 		}
+		room, _ := s.AddRoom(m.Owner)
+
+		log.Printf("NEW ROOM:\n %v", room)
+		js, err := json.Marshal(room)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// SUCCESS
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		room := s.AddRoom(m.Owner)
-		log.Println("NEW ROOM: ")
-		io.WriteString(w, "New user: "+strconv.Itoa(room.ID))
+		w.Write(js)
 	}
+}
+
+func requestPostData(w http.ResponseWriter, r *http.Request, path string, m interface{}) error {
+	if r.URL.Path != path {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return errors.New("Not found")
+	}
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return errors.New("Method not allowed")
+	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Bad Request (body)", http.StatusBadRequest)
+		return errors.New("Bad Request (body)")
+	}
+	err = json.Unmarshal(body, &m)
+	if err != nil {
+		http.Error(w, "Bad Request (body data)", http.StatusBadRequest)
+		return errors.New("Bad Request (body data)")
+	}
+	return nil
 }

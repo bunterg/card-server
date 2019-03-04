@@ -50,7 +50,7 @@ func main() {
 	}
 	// create the available services
 	cardAdder := cards.NewService(cardsStorage)
-	adder := adding.NewService(usersStorage)
+	adder := adding.NewService(usersStorage, roomsStorage)
 	lister := listing.NewService(usersStorage, roomsStorage)
 	// add some sample data
 	cardAdder.AddSampleCards()

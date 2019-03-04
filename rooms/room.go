@@ -20,7 +20,7 @@ type Room struct {
 
 // Board playars and cards
 type Board struct {
-	Graveyard decks.Deck `json:"gravetard"`
+	Graveyard decks.Deck `json:"graveyard"`
 	Deck      decks.Deck `json:"deck"`
 	Turn      int        `json:"turn"`
 	Hands     []Hand     `json:"hands"`
