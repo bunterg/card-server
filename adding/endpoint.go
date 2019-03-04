@@ -18,7 +18,6 @@ type SignUpBody struct {
 // MakeAddUserEndpoint user endpoint
 func MakeAddUserEndpoint(s Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println("SIGNUP FUNC")
 		var m SignUpBody
 		err := requestPostData(w, r, "/signup/", &m)
 		if err != nil {
@@ -39,21 +38,15 @@ func MakeAddUserEndpoint(s Service) func(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-// NewRoomBody body for room create request
-type NewRoomBody struct {
-	Owner users.User `json:"owner"`
-}
-
 // MakeAddRoomEndpoint Room endpoint
 func MakeAddRoomEndpoint(s Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println("NEW ROOM FUNC")
-		var m NewRoomBody
+		var m users.User
 		err := requestPostData(w, r, "/createRoom/", &m)
 		if err != nil {
 			return
 		}
-		room, _ := s.AddRoom(m.Owner)
+		room, _ := s.AddRoom(m)
 
 		log.Printf("NEW ROOM:\n %v", room)
 		js, err := json.Marshal(room)

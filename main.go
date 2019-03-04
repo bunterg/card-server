@@ -52,7 +52,8 @@ func main() {
 	cardAdder := cards.NewService(cardsStorage)
 	adder := adding.NewService(usersStorage, roomsStorage)
 	lister := listing.NewService(usersStorage, roomsStorage)
-	// add some sample data
+
+	// add default cards
 	cardAdder.AddSampleCards()
 
 	hub := newHub()

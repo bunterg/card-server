@@ -1,6 +1,8 @@
 package adding
 
 import (
+	"log"
+
 	"github.com/bunterg/card-server/rooms"
 	"github.com/bunterg/card-server/users"
 )
@@ -27,6 +29,10 @@ func (s *service) AddUser(u users.User) (users.User, error) {
 }
 
 func (s *service) AddRoom(u users.User) (rooms.Room, error) {
-	user, _ := s.uR.Get(u.ID)
+	user, err := s.uR.Get(u.ID)
+	if err != nil {
+		log.Panic(err)
+		return rooms.Room{}, rooms.ErrNotFound
+	}
 	return s.rR.Add(rooms.Room{}, user)
 }

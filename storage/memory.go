@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"log"
 	"time"
 
 	"github.com/bunterg/card-server/cards"
@@ -110,7 +109,7 @@ func (m *MemoryUserStorage) Get(id int) (users.User, error) {
 		}
 	}
 
-	return d, decks.ErrNotFound
+	return d, users.ErrNotFound
 }
 
 // GetAll return all Users
@@ -131,6 +130,7 @@ func (m *MemoryRoomStorage) Add(r rooms.Room, u users.User) (rooms.Room, error) 
 	r.Created = time.Now()
 	r.Owner = u
 	r.Players = []users.User{u}
+	m.rooms = append(m.rooms, r)
 	return r, nil
 }
 
@@ -138,7 +138,6 @@ func (m *MemoryRoomStorage) Add(r rooms.Room, u users.User) (rooms.Room, error) 
 func (m *MemoryRoomStorage) AddPlayer(room rooms.Room, u users.User) error {
 	r, _ := m.Get(room.ID)
 	r.Players = append(r.Players, u)
-	log.Println(r)
 	return nil
 }
 
