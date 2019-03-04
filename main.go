@@ -1,16 +1,37 @@
 package main
 
 import (
-	"fmt"
-	"time"
+	"flag"
+	"log"
+	"net/http"
 
+	"github.com/bunterg/card-server/adding"
 	"github.com/bunterg/card-server/cards"
 	"github.com/bunterg/card-server/storage"
 	"github.com/bunterg/card-server/users"
 )
 
+var addr = flag.String("addr", "localhost:8080", "http service address")
+
+func serveHome(w http.ResponseWriter, r *http.Request) {
+	log.Println("SERVE HOME")
+	log.Println(r.URL)
+	if r.URL.Path != "/" {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	http.ServeFile(w, r, "home.html")
+}
+
 func main() {
-	start := time.Now()
+	// start := time.Now()
+	// elapsed := time.Since(start)
+	flag.Parse()
+
 	// set up storage
 	storageType := storage.InMemory // this could be a flag; hardcoded here for simplicity
 	var cardsStorage cards.Repository
@@ -24,18 +45,26 @@ func main() {
 	}
 	// create the available services
 	adder := cards.NewService(cardsStorage)
-
+	userAdder := adding.NewService(usersStorage)
 	// add some sample data
 	adder.AddSampleCards()
-	usersStorage.Add(users.User{
-		ID:      1,
-		Name:    "Bernardo Garcia",
-		Created: time.Now()})
-	// change rand seed
-	fmt.Println(cardsStorage.GetAll()[105:])
-	fmt.Println(usersStorage.GetAll())
-	elapsed := time.Since(start)
-	fmt.Println("Init time", elapsed)
-	serve()
-	// os.Exit(1)
+
+	hub := newHub()
+	go hub.run()
+	http.HandleFunc("/", serveHome)
+	http.HandleFunc("/signup/", adding.MakeAddUserEndpoint(userAdder))
+	http.HandleFunc("/ws/", func(w http.ResponseWriter, r *http.Request) {
+		wsPath := "/ws/"
+		if r.URL.Path == wsPath {
+			http.Error(w, "Not found", http.StatusNotFound)
+			return
+		}
+		room := r.URL.Path[len(wsPath):]
+		serveWs(hub, w, r, room)
+	})
+
+	err := http.ListenAndServe(*addr, nil)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
+	}
 }

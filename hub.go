@@ -4,16 +4,6 @@
 
 package main
 
-type Subscription struct {
-	client *Client
-	room   string
-}
-
-type message struct {
-	data []byte
-	room string
-}
-
 // Hub maintains the set of active clients and broadcasts messages to the
 // clients.
 type Hub struct {
@@ -24,13 +14,13 @@ type Hub struct {
 	rooms map[string]map[*Client]bool
 
 	// Inbound messages from the clients.
-	broadcast chan message
+	broadcast chan []byte
 
 	// Register requests from the clients.
-	register chan *Subscription
+	register chan *Client
 
 	// Unregister requests from clients.
-	unregister chan *Subscription
+	unregister chan *Client
 }
 
 func newHub() *Hub {

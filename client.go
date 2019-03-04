@@ -144,7 +144,7 @@ func (c *Client) rename(name string) string {
 }
 
 // serveWs handles websocket requests from the peer.
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request, room string) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -152,7 +152,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 	id := len(hub.clients)
 	name := "PLAYER#" + strconv.Itoa(id)
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), name: name, id: id}
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), name: name, id: id, room: room}
 	client.hub.register <- client
 	mapB, _ := json.Marshal(map[string]string{"msg": "Welcome " + name})
 	client.hub.broadcast <- []byte(mapB)
