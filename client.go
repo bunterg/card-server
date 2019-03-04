@@ -6,8 +6,10 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -44,6 +46,10 @@ type Client struct {
 	// The websocket connection.
 	conn *websocket.Conn
 
+	room string
+	name string
+	id   int
+
 	// Buffered channel of outbound messages.
 	send chan []byte
 }
@@ -54,6 +60,7 @@ type Client struct {
 // ensures that there is at most one reader on a connection by executing all
 // reads from this goroutine.
 func (c *Client) readPump() {
+	// when readPump dies, runs defered function
 	defer func() {
 		c.hub.unregister <- c
 		c.conn.Close()
@@ -70,6 +77,15 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		var dat map[string]interface{}
+		if err := json.Unmarshal(message, &dat); err != nil {
+			panic(err)
+		}
+		if dat["type"] == "changeName" {
+			dat["msg"] = c.rename(dat["msg"].(string))
+			mapB, _ := json.Marshal(dat)
+			message = []byte(mapB)
+		}
 		c.hub.broadcast <- message
 	}
 }
@@ -120,6 +136,13 @@ func (c *Client) writePump() {
 	}
 }
 
+func (c *Client) rename(name string) string {
+	newname := name + "#" + strconv.Itoa(c.id)
+	msg := c.name + " changed name to: " + newname
+	c.name = newname
+	return msg
+}
+
 // serveWs handles websocket requests from the peer.
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -127,8 +150,12 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
+	id := len(hub.clients)
+	name := "PLAYER#" + strconv.Itoa(id)
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), name: name, id: id}
 	client.hub.register <- client
+	mapB, _ := json.Marshal(map[string]string{"msg": "Welcome " + name})
+	client.hub.broadcast <- []byte(mapB)
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.

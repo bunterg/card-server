@@ -36,6 +36,6 @@ func main() {
 	fmt.Println(usersStorage.GetAll())
 	elapsed := time.Since(start)
 	fmt.Println("Init time", elapsed)
-	server()
+	serve()
 	// os.Exit(1)
 }
