@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
@@ -76,10 +77,19 @@ func main() {
 			http.Error(w, "Invalid room id", http.StatusBadRequest)
 			return
 		}
+		// check if room exist
+		// todo check room is open
 		_, err = roomsStorage.Get(id)
 		if err != nil {
 			http.Error(w, "Room not found", http.StatusNotFound)
 			return
+		}
+		// Identify user
+		keys := r.URL.Query()
+		var user users.User
+		err = json.Unmarshal([]byte(keys["user"][0]), &user)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		serveWs(hub, w, r, roomID)
 	})
