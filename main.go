@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/bunterg/card-server/listing"
 	"github.com/bunterg/card-server/rooms"
@@ -66,11 +67,21 @@ func main() {
 	http.HandleFunc("/ws/", func(w http.ResponseWriter, r *http.Request) {
 		wsPath := "/ws/"
 		if r.URL.Path == wsPath {
-			http.Error(w, "Not found", http.StatusNotFound)
+			http.Error(w, "No room params found", http.StatusNotFound)
 			return
 		}
-		room := r.URL.Path[len(wsPath):]
-		serveWs(hub, w, r, room)
+		roomID := r.URL.Path[len(wsPath):]
+		id, err := strconv.Atoi(roomID)
+		if err != nil {
+			http.Error(w, "Invalid room id", http.StatusBadRequest)
+			return
+		}
+		_, err = roomsStorage.Get(id)
+		if err != nil {
+			http.Error(w, "Room not found", http.StatusNotFound)
+			return
+		}
+		serveWs(hub, w, r, roomID)
 	})
 
 	err := http.ListenAndServe(*addr, nil)
