@@ -19,7 +19,7 @@ type SignUpBody struct {
 func MakeAddUserEndpoint(s Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var m SignUpBody
-		err := requestPostData(w, r, "/signup/", &m)
+		err := requestPostData(w, r, "/createUser/", &m)
 		if err != nil {
 			return
 		}

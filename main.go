@@ -59,9 +59,9 @@ func main() {
 	hub := newHub()
 	go hub.run()
 	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/signup/", adding.MakeAddUserEndpoint(adder))
-	http.HandleFunc("/createRoom/", adding.MakeAddRoomEndpoint(adder))
+	http.HandleFunc("/createUser/", adding.MakeAddUserEndpoint(adder))
 	http.HandleFunc("/getUsers/", listing.MakeGetUsersEndpoint(lister))
+	http.HandleFunc("/createRoom/", adding.MakeAddRoomEndpoint(adder))
 	http.HandleFunc("/getRooms/", listing.MakeGetRoomsEndpoint(lister))
 	http.HandleFunc("/ws/", func(w http.ResponseWriter, r *http.Request) {
 		wsPath := "/ws/"
