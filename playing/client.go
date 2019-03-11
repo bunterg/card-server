@@ -1,8 +1,21 @@
+package playing
+
+// type Client struct {
+// 	hub *Hub
+// 	// The websocket connection.
+// 	conn *websocket.Conn
+
+// 	room string
+// 	name string
+// 	id   int
+
+// 	// Buffered channel of outbound messages.
+// 	send chan []byte
+// }
+
 // Copyright 2013 The Gorilla WebSocket Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
-
-package main
 
 import (
 	"bytes"

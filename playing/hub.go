@@ -1,4 +1,4 @@
-package server
+package playing
 
 type message struct {
 	data []byte

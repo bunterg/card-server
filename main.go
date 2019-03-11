@@ -1,13 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/bunterg/card-server/listing"
+	"github.com/bunterg/card-server/playing"
 	"github.com/bunterg/card-server/rooms"
 
 	"github.com/bunterg/card-server/adding"
@@ -54,45 +53,19 @@ func main() {
 	cardAdder := cards.NewService(cardsStorage)
 	adder := adding.NewService(usersStorage, roomsStorage)
 	lister := listing.NewService(usersStorage, roomsStorage)
+	playingService := playing.NewService(usersStorage, roomsStorage)
 
 	// add default cards
 	cardAdder.AddSampleCards()
 
-	hub := newHub()
-	go hub.run()
+	hub := playing.NewHub()
+	go hub.Run()
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/createUser/", adding.MakeAddUserEndpoint(adder))
 	http.HandleFunc("/getUsers/", listing.MakeGetUsersEndpoint(lister))
 	http.HandleFunc("/createRoom/", adding.MakeAddRoomEndpoint(adder))
 	http.HandleFunc("/getRooms/", listing.MakeGetRoomsEndpoint(lister))
-	http.HandleFunc("/ws/", func(w http.ResponseWriter, r *http.Request) {
-		wsPath := "/ws/"
-		if r.URL.Path == wsPath {
-			http.Error(w, "No room params found", http.StatusNotFound)
-			return
-		}
-		roomID := r.URL.Path[len(wsPath):]
-		id, err := strconv.Atoi(roomID)
-		if err != nil {
-			http.Error(w, "Invalid room id", http.StatusBadRequest)
-			return
-		}
-		// check if room exist
-		// todo check room is open
-		_, err = roomsStorage.Get(id)
-		if err != nil {
-			http.Error(w, "Room not found", http.StatusNotFound)
-			return
-		}
-		// Identify user
-		keys := r.URL.Query()
-		var user users.User
-		err = json.Unmarshal([]byte(keys["user"][0]), &user)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		serveWs(hub, w, r, roomID)
-	})
+	http.HandleFunc("/ws/", playing.MakeGameRoomEndpoint(playingService, hub))
 
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
