@@ -10,21 +10,16 @@ import (
 	"github.com/bunterg/card-server/users"
 )
 
-// SignUpBody body for signup request
-type SignUpBody struct {
-	Username string `json:"username"`
-}
-
 // MakeAddUserEndpoint user endpoint
 func MakeAddUserEndpoint(s Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var m SignUpBody
+		var m users.User
 		err := postRequestData(w, r, "/createUser/", &m)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		profile, _ := s.AddUser(users.User{Name: m.Username})
+		profile, _ := s.AddUser(m)
 		log.Printf("NEW USER:\n %v", profile)
 		js, err := json.Marshal(profile)
 		if err != nil {
