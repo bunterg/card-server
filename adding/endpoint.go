@@ -21,6 +21,7 @@ func MakeAddUserEndpoint(s Service) func(w http.ResponseWriter, r *http.Request)
 		var m SignUpBody
 		err := postRequestData(w, r, "/createUser/", &m)
 		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		profile, _ := s.AddUser(users.User{Name: m.Username})
@@ -44,6 +45,7 @@ func MakeAddRoomEndpoint(s Service) func(w http.ResponseWriter, r *http.Request)
 		var m users.User
 		err := postRequestData(w, r, "/createRoom/", &m)
 		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		room, _ := s.AddRoom(m)
