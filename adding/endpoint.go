@@ -19,7 +19,7 @@ type SignUpBody struct {
 func MakeAddUserEndpoint(s Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var m SignUpBody
-		err := requestPostData(w, r, "/createUser/", &m)
+		err := postRequestData(w, r, "/createUser/", &m)
 		if err != nil {
 			return
 		}
@@ -42,12 +42,11 @@ func MakeAddUserEndpoint(s Service) func(w http.ResponseWriter, r *http.Request)
 func MakeAddRoomEndpoint(s Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var m users.User
-		err := requestPostData(w, r, "/createRoom/", &m)
+		err := postRequestData(w, r, "/createRoom/", &m)
 		if err != nil {
 			return
 		}
 		room, _ := s.AddRoom(m)
-
 		log.Printf("NEW ROOM:\n %v", room)
 		js, err := json.Marshal(room)
 		if err != nil {
@@ -62,7 +61,7 @@ func MakeAddRoomEndpoint(s Service) func(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func requestPostData(w http.ResponseWriter, r *http.Request, path string, m interface{}) error {
+func postRequestData(w http.ResponseWriter, r *http.Request, path string, m interface{}) error {
 	if r.URL.Path != path {
 		http.Error(w, "Not found", http.StatusNotFound)
 		return errors.New("Not found")
