@@ -13,13 +13,13 @@ import (
 // MakeAddUserEndpoint user endpoint
 func MakeAddUserEndpoint(s Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var m users.User
-		err := postRequestData(w, r, "/createUser/", &m)
+		var u users.User
+		err := postRequestData(w, r, "/createUser/", &u)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		profile, _ := s.AddUser(m)
+		profile, _ := s.AddUser(u)
 		log.Printf("NEW USER:\n %v", profile)
 		js, err := json.Marshal(profile)
 		if err != nil {
@@ -37,13 +37,13 @@ func MakeAddUserEndpoint(s Service) func(w http.ResponseWriter, r *http.Request)
 // MakeAddRoomEndpoint Room endpoint
 func MakeAddRoomEndpoint(s Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var m users.User
-		err := postRequestData(w, r, "/createRoom/", &m)
+		var u users.User
+		err := postRequestData(w, r, "/createRoom/", &u)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		room, _ := s.AddRoom(m)
+		room, _ := s.AddRoom(u)
 		log.Printf("NEW ROOM:\n %v", room)
 		js, err := json.Marshal(room)
 		if err != nil {
